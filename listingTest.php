@@ -2,34 +2,23 @@
   require_once 'includes/db.php';
   require_once 'includes/functions.php';
 
-// initialise variables
-//This is done to prevent html from throwing errors because
-  //the page doesn't recognise these variables.
-  //This variables will be used later
+  // initialise variables
   $minPrice = '';
   $maxPrice = '';
   $location = '';
   $status   = '';
   $results  = [];
 
-// If the user clicks on search botton 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // sanitise inputs to prevent Cross Site Scripting (XSS)
+    // sanitise inputs
     $minPrice = htmlspecialchars($_POST['minPrice']);
     $maxPrice = htmlspecialchars($_POST['maxPrice']);
     $location = htmlspecialchars($_POST['location']);
     $status   = htmlspecialchars($_POST['status']);
 
     // build dynamic query
-    // $conditions handles set of rules e.g. price must be at least X amount
     $conditions = [];
-    // $params handles a list of actual values
     $params     = [];
-
-    //: before values e.g. :minPrice acts as a placeholder
-    //instead of putting the user's data directly into the SQL
-    //which is dangerous, I put a label there and fill it in later
-    //to prevent SQL injecttion
 
     if (!empty($minPrice)) {
       $conditions[] = "price >= :minPrice";
@@ -43,10 +32,6 @@
 
     if (!empty($location)) {
       $conditions[] = "location LIKE :location";
-      // using the wirldcard % with the LIKE operator 
-      //to find text that contains whatever the user types in location
-      //no matter what comes before or after them
-      //% location % 
       $params[':location'] = "%" . $location . "%";
     }
 
@@ -55,37 +40,26 @@
       $params[':status'] = $status;
     }
 
-//Get everything from the properties table
     $sql = "SELECT * FROM properties";
 
-	//If the user types anything in the input and option fields
-	//add a WHERE clause
-    //implode(" AND ", $conditions) takes list of rules and glue
-    //them together with the word AND
-    //e.g. a search for min price and location becomes
-    //WHERE price >= :minPrice AND location LIKE :location
     if (!empty($conditions)) {
       $sql .= " WHERE " . implode(" AND ", $conditions);
     }
 
-    //send a template (a placeholder) of my SQL command to the database
     $stmt = $pdo->prepare($sql);
-    //execute($params) sends actual data to fill in the placeholders
     $stmt->execute($params);
-    //fetchAll() grab matching rows and save them into $results array
     $results = $stmt->fetchAll();
   }
 ?>
 
-<?php 
-
-//Assign a page title for search page
-//This variable has been called in <title> in the header.php
-$pageTitle = htmlspecialchars('Search');
-require_once 'includes/header.php'; 
-
-
-?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search — <?php echo SITE_NAME; ?></title>
+</head>
+<body>
 
   <h1><?php echo SITE_NAME; ?></h1>
   <a href="index.php">← Back to listings</a>
@@ -111,8 +85,6 @@ require_once 'includes/header.php';
     <label>Status</label>
     <select name="status">
       <option value="">Any</option>
-      <!-- Use of Ternary Operator (one line if statement). If the current status is 'Available'
-      add the word selected to the HTML so this option stays highlighted -->
       <option value="Available" <?php echo $status === 'Available' ? 'selected' : ''; ?>>Available</option>
       <option value="Sold" <?php echo $status === 'Sold' ? 'selected' : ''; ?>>Sold</option>
     </select>
@@ -138,5 +110,5 @@ require_once 'includes/header.php';
     <?php endif; ?>
   <?php endif; ?>
 
-
-<?php require_once 'includes/footer.php'; ?>
+</body>
+</html>
