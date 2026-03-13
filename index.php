@@ -20,12 +20,17 @@ require_once 'includes/header.php';
 		<p>No properties found.</p>
 	<?php else: ?>
 		<?php foreach($properties as $property): ?>
-			<div style="border: 1px solid #ccc; padding:15px; margin-bottom:25px;">
-				<h2><?php echo $property['name']; ?></h2>
-				<p><strong>Price:</strong> £<?php echo number_format($property['price']);?></p>
-				<p><strong>Location:</strong> <?php echo $property['location']; ?></p>
-				<p><strong>Status:</strong> <?php echo $property['status']; ?></p>
+				<div style="border: 1px solid #ccc; padding:15px; margin-bottom:25px;">
+					<a href="property.php?id=<?php echo $property['id']; ?>">
+						<h2><?php echo $property['name']; ?></h2>
+						<p><strong>Price:</strong> £<?php echo number_format($property['price']);?></p>
+						<p><strong>Location:</strong> <?php echo $property['location']; ?></p>
+						<p><strong>Status:</strong> <?php echo $property['status']; ?></p>
+					</a>
+					
 			</div>
+			
+			
 		<?php endforeach; ?>
 	<?php endif; ?>
 

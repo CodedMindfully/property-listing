@@ -132,7 +132,7 @@ require_once 'includes/header.php';
       <p><?php echo count($results); ?> properties found</p>
       <?php foreach ($results as $property): ?>
         <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
-          <?php displayProperties($property); ?>
+          <?php echo displayProperties($property); ?>
         </div>
       <?php endforeach; ?>
     <?php endif; ?>
