@@ -150,6 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 
+$pageTitle = htmlspecialchars('Edit Property');
+require_once '../includes/header.php';
 
 
 ?>
@@ -183,18 +185,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		<form accept="" method="post" enctype="multipart/form-data">
 			<div class="propForm">
 				<label for="name">Name</label>
-				<input type="text" name="propName" value="<?php echo $data['name']; ?>">
+				<!-- Value = "If the user types something in, show what they typed 
+				else show what's in the db" -->
+				<input type="text" name="propName" 
+					value="<?php echo !empty($propName) ? htmlspecialchars($propName) : htmlspecialchars($data['name']); ?>">
 			</div>
 			<div class="propForm">
 				<label for="price">Price</label>
-				<input type="number" name="price" value="<?php echo $data['price']; ?>">
+				<input type="number" name="price" value="<?php echo !empty($data['price']) ? htmlspecialchars($data['price']) : htmlspecialchars($data['price']); ?>">
 			</div>
 			<div class="propForm">
 				<label for="location">Location</label>
-				<input type="text" name="location" value="<?php echo $data['location']; ?>">
+				<input type="text" name="location" value="<?php echo !empty($data['location']) ? htmlspecialchars($data['location']) : htmlspecialchars($data['location']); ?>">
 			</div>
 			<div class="propForm">
-				<p>This property is current <b><?php echo $data['status']; ?></b> </p>
+				<p>This property is current <b><?php echo htmlspecialchars($data['status']); ?></b> </p>
 				<label for="status">Change Property Status</label>
 					<select name="status">
 						<!-- Print the current status by default -->
@@ -225,3 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		</form>
 	</div>
 </section>
+
+<?php
+require_once '../includes/footer.php';
+
+?>
