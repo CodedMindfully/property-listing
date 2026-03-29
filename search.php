@@ -108,7 +108,7 @@ require_once 'includes/header.php';
 
     <br><br>
 
-    <label>Status</label>
+    <label for="status">Status</label>
     <select name="status">
       <option value="">Any</option>
       <!-- Use of Ternary Operator (one line if statement). If the current status is 'Available'

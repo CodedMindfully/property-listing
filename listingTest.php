@@ -13,5 +13,18 @@ query database
 redirect if not found
 */
 
+						$soldCount = 0;
+						foreach($properties as $property) : ?>
+					<?php if($property['status'] === 'Available') :?>
+						<?php  echo $soldCount ++; ?>
+					<?php endif; ?>
+				<?php endforeach; ?>
 
+<?php if($property['status'] === 'sold') : ?>
+								<p> <?php echo count($property['status']) ;?> </p>
+							<?php endif; ?>
+
+				<?php foreach($properties as $property) : ?> 
+							<p><?php echo count($properties['status'] === 'sold'); ?></p>
+					<?php endforeach; ?>
 ?>
