@@ -26,8 +26,8 @@ if (isset($_GET['id'])) {
 		exit();
 	}
 
-	// if id is a save number
-	$idSql = "SELECT * FROM properties WHERE id = :id";
+	// List a property that hasn't been deleted
+	$idSql = "SELECT * FROM properties WHERE id = :id AND deleted_at is NULL";
 	$idStmt = $pdo->prepare($idSql);
 	$idStmt->execute([
 		':id' => $id
@@ -150,6 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 
+// Declear a variable that calls the admin navigation
+$isAdmin = true;
 $pageTitle = htmlspecialchars('Edit Property');
 require_once '../includes/header.php';
 

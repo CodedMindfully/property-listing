@@ -56,7 +56,7 @@
     }
 
 //Get everything from the properties table
-    $sql = "SELECT * FROM properties";
+    $sql = "SELECT * FROM properties WHERE deleted_at IS NULL";
 
 	//If the user types anything in the input and option fields
 	//add a WHERE clause

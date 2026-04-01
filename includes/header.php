@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +9,22 @@
 	<script type="text/javascript" src="/assets/js/main.js"></script>
 </head>
 <body>
-	<nav>
-		<div class="navbar">
-			<a href="index.php">Home</a>
-			<a href="search.php">Search</a>
-		</div>
-	</nav>
+	<!-- Admin sidebar -->
+	<!-- If the variable is $isAdmin is called and its an admin page -->
+	<?php if (isset($isAdmin) && $isAdmin) : ?>
+		<aside class="">
+			<a href="/admin/index.php">Dashboard</a>
+			<a href="/admin/add-property.php">Add Property</a>
+			<a href="/admin/deleted.php">Recently Deleted</a>
+			<!-- Opens public homepage in new tab -->
+			<a href="/index.php" target="_blank">View Site</a>
+			<a href="/admin/logout.php">Logout</a>
+		</aside>
+		
+	<?php else: ?>
+		<!-- Public navigation -->
+		<nav class="navbar">
+			<a href="/index.php">Home</a>
+			<a href="/search.php">Search Properties</a>
+		</nav>
+	<?php endif; ?>

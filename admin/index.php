@@ -4,11 +4,15 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 
-$query = "SELECT * FROM properties";
+$query = "SELECT * FROM properties WHERE deleted_at IS NULL";
 $stmt = $pdo->prepare($query);
 $stmt->execute();
 $properties = $stmt->fetchAll();
 
+
+
+// Declear a variable that calls the admin navigation
+$isAdmin = true;
 $pageTitle = htmlspecialchars('Dashboard');
 require_once '../includes/header.php';
 
@@ -18,27 +22,10 @@ require_once '../includes/header.php';
 	<div class="welcome">
 		<p><?php echo "Welcome: " . $_SESSION['name']; ?></p>
 	</div>
-	<nav class="nav">
-		<div>
-			<a href="add-property.php">Add Properties</a>
-		</div>
-		<div>
-			<a href="edit-property.php">Edit Properties</a>
-		</div>
-		<div>
-			<a href="delete-property.php">Delete Properties</a>
-		</div>
-	</nav>
-	<div class="logout">
-		<a href="logout.php">Logout</a>
-		<br><br>
-		
-	</div>
-
 		<!-- Display the success message and distroy the variable -->
 		<?php if (isset($_SESSION['success'])): ?>
 			<div class="displaySuccess">
-				<p><?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']);?></p>
+				<p style="color: green;"><?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']);?></p>
 			</div>
 		<?php  endif; ?>
 	<div class="propDisplay">
@@ -77,7 +64,8 @@ require_once '../includes/header.php';
 					<td><img src="../assets/images/<?php echo htmlspecialchars($property['image']); ?>" height="50" width="50"></td>
 					<td style="display: flex; gap: 10px;">
 						<a href="edit-property.php?id=<?php echo $property['id'] ?>" class="actionBtn">Edit</a>
-						<a href="delete-property.php?id=<?php echo $property['id'] ?>" class="actionBtn">Delete</a>
+						<a href="delete-property.php?id=<?php echo $property['id']; ?>" class="actionBtn" id="deleteBtn">Delete</a>
+						<a href="/property.php?id=<?php echo $property['id']; ?>" target="_blank">View Listing</a>
 					</td>
 				</tr>
 				<?php endforeach; ?>

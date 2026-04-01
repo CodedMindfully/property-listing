@@ -3,7 +3,7 @@ require_once 'includes/db.php';
 // Home page listing all properties
 require_once 'includes/functions.php';
 //fetch all properties from database
-$stmt = $pdo->query("SELECT * FROM properties");
+$stmt = $pdo->query("SELECT * FROM properties WHERE deleted_at IS NULL");
 $properties = $stmt->fetchAll();
 
 //HTML output after all logic is complete

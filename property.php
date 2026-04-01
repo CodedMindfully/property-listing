@@ -20,7 +20,7 @@ if(isset($_GET['id'])){
 	}
 
 	// Now we know id is a safe number
-	$query = "SELECT * FROM properties WHERE id = :id ";
+	$query = "SELECT * FROM properties WHERE id = :id AND deleted_at IS NULL";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute([':id' => $id]);
 	//fetch the row as an associative array

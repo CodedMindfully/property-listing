@@ -80,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
+// Declear a variable that calls the admin navigation
+$isAdmin = true;
 $pageTitle = "Add Property";
-
 require_once '../includes/header.php';
 
 ?>
@@ -132,8 +132,6 @@ require_once '../includes/header.php';
 			<div class="selectUpload">
 				<input type="submit" name="submit" value="Upload Property">
 			</div>
-			
-
 		</form>
 	</div>
 </section>
