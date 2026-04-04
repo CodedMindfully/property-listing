@@ -99,6 +99,7 @@ require_once '../includes/header.php';
 	<div class="form">
 		<form action="" method="post">
 			<div class="propForm">
+				<!-- add the id to the input value so db knows what record to delete -->
 				<input type="hidden" name="id" value="<?php echo $data['id']; ?>">
 			</div>
 				

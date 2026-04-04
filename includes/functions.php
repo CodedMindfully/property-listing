@@ -118,3 +118,17 @@ function uploadImage($fileInputName = 'image'){
 
 }
 
+
+function showFlashMessages(){
+	if (isset($_SESSION['success'])) {
+		// code...
+		echo '<p style="color:green;">' . htmlspecialchars($_SESSION['success']) . '</p>';
+		unset($_SESSION['success']);
+	}
+
+	if (isset($_SESSION['error'])) {
+		// code...
+		echo '<p style="color:red;">' . htmlspecialchars($_SESSION['error']) . '</p>';
+		unset($_SESSION['error']);
+	}
+}

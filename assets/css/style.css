@@ -46,3 +46,14 @@ input[type=text], input[type=password] {
 table, th, td {
   border: 1px solid black;
 }
+
+
+.restoreBtn{
+	background-color: green;
+	color: whitesmoke;
+}
+
+.deleteBtn {
+	background-color: red;
+	color: whitesmoke;
+}

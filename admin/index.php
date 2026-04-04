@@ -30,7 +30,7 @@ require_once '../includes/header.php';
 		<?php  endif; ?>
 	<div class="propDisplay">
 		<?php if (empty($properties)) :?>
-			<p><?php echo 'There are no properties' ;?></p>
+			<p><?php echo 'There are no properties.' ;?></p>
 		<?php else :?>
 			<table style="width: 100%;">
 				<p> Number of total properties <?php echo count($properties); ?></p>
