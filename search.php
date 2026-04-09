@@ -1,6 +1,7 @@
 <?php
   require_once 'includes/db.php';
   require_once 'includes/functions.php';
+  require_once 'includes/classes/Property.php';
 
 // initialise variables
 //This is done to prevent html from throwing errors because
@@ -10,7 +11,7 @@
   $maxPrice = '';
   $location = '';
   $status   = '';
-  $results  = [];
+  $rows  = [];
 
 // If the user clicks on search botton 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -56,7 +57,7 @@
     }
 
 //Get everything from the properties table
-    $sql = "SELECT * FROM properties WHERE deleted_at IS NULL";
+    $sql = "SELECT * FROM properties";
 
 	//If the user types anything in the input and option fields
 	//add a WHERE clause
@@ -65,19 +66,27 @@
     //e.g. a search for min price and location becomes
     //WHERE price >= :minPrice AND location LIKE :location
     if (!empty($conditions)) {
-      $sql .= " WHERE " . implode(" AND ", $conditions);
+      $sql .= " WHERE " . implode(" AND ", $conditions) . " AND deleted_at IS NULL";
     }
 
     //send a template (a placeholder) of my SQL command to the database
     $stmt = $pdo->prepare($sql);
     //execute($params) sends actual data to fill in the placeholders
     $stmt->execute($params);
-    //fetchAll() grab matching rows and save them into $results array
-    $results = $stmt->fetchAll();
-  }
-?>
+    //fetchAll() grab matching rows and save them into $rows array
+    $rows = $stmt->fetchAll();
 
-<?php 
+  }
+
+  // turn each database row into an object
+  $properties = [];
+
+  // Loop through the property $rows
+  foreach ($rows as $row) {
+    // store the rows in the results array
+    $properties [] = new Property($row);
+  }
+
 
 //Assign a page title for search page
 //This variable has been called in <title> in the header.php
@@ -126,13 +135,17 @@ require_once 'includes/header.php';
 
   <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
     <h2>Results</h2>
-    <?php if (empty($results)): ?>
+    <?php if (empty($properties)): ?>
       <p>No properties found matching your search.</p>
     <?php else: ?>
-      <p><?php echo count($results); ?> properties found</p>
-      <?php foreach ($results as $property): ?>
+      <p><?php echo count($properties); ?> properties found</p>
+      <?php foreach ($properties as $property): ?>
         <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
-          <?php echo displayProperties($property); ?>
+          <h2><?php echo htmlspecialchars($property->getTitle()); ?></h2>
+          <p><?php echo $property->getFormattedPrice(); ?></p>
+          <p><?php echo htmlspecialchars($property->getLocation()); ?></p>
+          <p><?php echo $property->getStatus(); ?></p>
+          <p><img src="assets/images/<?php echo $property->getImage(); ?>" height="50" width="50"></p>
         </div>
       <?php endforeach; ?>
     <?php endif; ?>

@@ -2,6 +2,7 @@
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
+require_once '../includes/classes/Property.php';
 
 
 if (isset($_GET['id'])) {
@@ -84,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
+// Create an object 
+$property = new Property($data);
 
 
 $isAdmin = true;
@@ -94,13 +97,25 @@ require_once '../includes/header.php';
 <section class="content">
 	<div class="displayRecord">
 		<p>Are you sure you want to delete this property?</p>
-		<?php echo displayProperties($data); ?>
+		<h2><?php echo htmlspecialchars($property->getTitle()); ?></h2>
+			<p class="propTag">
+				<?php if ($property->isAvailable()): ?>
+					<span style="color:green"> - Available</span>
+				<?php else: ?>
+					<span style="color:red">Sold</span>
+				<?php endif;?>
+			</p>
+			<p><?php echo $property->getFormattedPrice();?></p>
+			<p><?php echo htmlspecialchars($property->getLocation());?></p>
+			<p><?php echo htmlspecialchars($property->getStatus());?></p>
+			<p><img src="assets/images/<?php echo $property->getImage(); ?>" height="50" width="50">
+				</p>
 	</div>
 	<div class="form">
 		<form action="" method="post">
 			<div class="propForm">
 				<!-- add the id to the input value so db knows what record to delete -->
-				<input type="hidden" name="id" value="<?php echo $data['id']; ?>">
+				<input type="hidden" name="id" value="<?= $property->getId(); ?>">
 			</div>
 				
 			<div class="propForm">

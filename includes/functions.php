@@ -4,7 +4,7 @@
 // Display property
 function displayProperties($property){
 
-	$name = htmlspecialchars($property['name']);
+	$title = htmlspecialchars($property['title']);
 	$price = number_format($property['price']);
 	$location = htmlspecialchars($property['location']);
 	$status = htmlspecialchars($property['status']);
@@ -17,7 +17,7 @@ function displayProperties($property){
 
 	// Build the output string and use .= operator to attach
 	//a next line to what is already in the $outpud variable
-	$output = "Property name: " . $name . "<br>";
+	$output = "Property Title: " . $title . "<br>";
 	$output .= "Property price: £" . $price . "<br>";
 	$output .= "Property location: " . $location . "<br>";
 	$output .= "Property status: " . $status . "<br>";

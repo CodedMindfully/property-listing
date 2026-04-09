@@ -6,14 +6,14 @@
 // Update current property
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// code...
-	$propName = cleanInputs($_POST['propName']);
+	$propTitle = cleanInputs($_POST['propTitle']);
 	// Strip everything except digits and + -
 	$cleanPrice = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT);
 	$location = cleanInputs($_POST['location']);
 	$status = cleanInputs($_POST['status']);
 	$imageResult = uploadImage('image');
 
-	if(empty($propName) || empty($location) || empty($status)){
+	if(empty($propTitle) || empty($location) || empty($status)){
 		$errors [] = 'All fields are required.';
 	}
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					WHERE id = :id";
 			$stmt = $pdo->prepare($sql);
 			$result = $stmt->execute([
-				':name' => $propName,
+				':name' => $propTitle,
 				':price' => $price,
 				':location' => $location,
 				'status' => $status,

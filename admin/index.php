@@ -3,12 +3,22 @@
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
+require_once '../includes/classes/Property.php';
 
 $query = "SELECT * FROM properties WHERE deleted_at IS NULL";
 $stmt = $pdo->prepare($query);
 $stmt->execute();
-$properties = $stmt->fetchAll();
+$rows = $stmt->fetchAll();
 
+
+// Create an empty array to hold the properties
+$properties = [];
+
+// Loop through the array and store the db data in the $properties array
+foreach ($rows as $row) {
+	// code...
+	$properties [] = new Property($row);
+}
 
 
 // Declear a variable that calls the admin navigation
@@ -48,7 +58,7 @@ require_once '../includes/header.php';
 				<p>Number of properties available <?php echo $availCount; ?></p>
 				<p>Number of properties sold <?php echo $soldCount; ?></p>
 				<tr>
-					<th>Name</th>
+					<th>Title</th>
 					<th>Price</th>
 					<th>Location</th>
 					<th>Status</th>
@@ -57,15 +67,15 @@ require_once '../includes/header.php';
 				</tr>
 				<?php foreach($properties as $property) : ?>
 				<tr>
-					<td><?php echo htmlspecialchars($property['name']); ?></td>
-					<td><?php echo htmlspecialchars($property['price']); ?></td>
-					<td><?php echo htmlspecialchars($property['location']); ?></td>
-					<td><?php echo htmlspecialchars($property['status']); ?></td>
-					<td><img src="../assets/images/<?php echo htmlspecialchars($property['image']); ?>" height="50" width="50"></td>
+					<td><?php echo htmlspecialchars($property->getTitle()); ?></td>
+					<td><?php echo $property->getFormattedPrice(); ?></td>
+					<td><?php echo htmlspecialchars($property->getLocation()); ?></td>
+					<td><?php echo htmlspecialchars($property->getStatus()); ?></td>
+					<td><img src="../assets/images/<?php echo htmlspecialchars($property->getImage()); ?>" height="50" width="50"></td>
 					<td style="display: flex; gap: 10px;">
-						<a href="edit-property.php?id=<?php echo $property['id'] ?>" class="actionBtn">Edit</a>
-						<a href="delete-property.php?id=<?php echo $property['id']; ?>" class="actionBtn" id="deleteBtn">Delete</a>
-						<a href="/property.php?id=<?php echo $property['id']; ?>" target="_blank">View Listing</a>
+						<a href="edit-property.php?id=<?php echo $property->getId(); ?>" class="actionBtn">Edit</a>
+						<a href="delete-property.php?id=<?php echo $property->getId(); ?>" class="actionBtn" id="deleteBtn">Delete</a>
+						<a href="/property.php?id=<?php echo $property->getId(); ?>" target="_blank">View Listing</a>
 					</td>
 				</tr>
 				<?php endforeach; ?>

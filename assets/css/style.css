@@ -48,6 +48,8 @@ table, th, td {
 }
 
 
+
+
 .restoreBtn{
 	background-color: green;
 	color: whitesmoke;
@@ -56,4 +58,12 @@ table, th, td {
 .deleteBtn {
 	background-color: red;
 	color: whitesmoke;
+}
+
+.propertyById h2, .propTag {
+	display: inline-block;
+}
+
+.propTag{
+	
 }

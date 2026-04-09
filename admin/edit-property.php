@@ -2,14 +2,16 @@
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
+require_once '../includes/classes/Property.php';
 // require_once 'add-property.php';
 
 
-// $id = $_GET['id'];
-$propName = '';
-$price = '';
-$location = '';
-$status = '';
+$id = $_GET['id'];
+// initialise variables for form values
+$propTitle = null;
+$price = null;
+$location = null;
+$status = null;
 $errors = [];
 $data = '';
 // $oldArray = [];
@@ -34,6 +36,7 @@ if (isset($_GET['id'])) {
 	]);
 	$data = $idStmt->fetch();
 
+
 	// if the data does not exist in the db redirect
 	if (!$data) {
 		header('Location: index.php');
@@ -48,14 +51,14 @@ if (isset($_GET['id'])) {
 // Update current property
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// code...
-	$propName = cleanInputs($_POST['propName']);
+	$propTitle = cleanInputs($_POST['propTitle']) ?? null;
 	// Strip everything except digits and + -
-	$cleanPrice = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT);
-	$location = cleanInputs($_POST['location']);
-	$status = cleanInputs($_POST['status']);
+	$cleanPrice = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT) ?? null;
+	$location = cleanInputs($_POST['location']) ?? null ;
+	$status = cleanInputs($_POST['status']) ?? null;
 	// $imageResult = uploadImage('image');
 
-	if(empty($propName) || empty($location) || empty($status)){
+	if(empty($propTitle) || empty($location) || empty($status)){
 		$errors [] = 'All fields are required.';
 	}
 
@@ -86,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		// compare current db data to what user is sending
 		$oldArray = [
-				'name' => $data['name'], 
+				'title' => $data['title'], 
 				// price is int but cast it to string for now
 				//for accurate comparison
 				'price' => (string)$data['price'], 
@@ -95,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				'image' => $data['image']
 		];
 		$newArray = [
-				'name' => $propName,
+				'title' => $propTitle,
 				'price' => (string)$price,
 				'location' => $location,
 				'status' => $status,
@@ -110,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// Update the entries
 			$sql = "UPDATE properties 
-					SET name = :name, 
+					SET title = :title, 
 					price = :price, 
 					location = :location, 
 					status = :status,
@@ -118,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					WHERE id = :id";
 			$stmt = $pdo->prepare($sql);
 			$result = $stmt->execute([
-				':name' => $propName,
+				':title' => $propTitle,
 				':price' => $price,
 				':location' => $location,
 				':status' => $status,
@@ -149,6 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 
 }
+
+// creaate an object 
+$property = new Property($data);
 
 // Declear a variable that calls the admin navigation
 $isAdmin = true;
@@ -186,32 +192,33 @@ require_once '../includes/header.php';
 		</div>
 		<form accept="" method="post" enctype="multipart/form-data">
 			<div class="propForm">
-				<label for="name">Name</label>
+				<label for="title">Property Title</label>
 				<!-- Value = "If the user types something in, show what they typed 
 				else show what's in the db" -->
-				<input type="text" name="propName" 
-					value="<?php echo !empty($propName) ? htmlspecialchars($propName) : htmlspecialchars($data['name']); ?>">
+				<input type="text" name="propTitle" 
+					value="<?php echo !empty($propTitle) ? htmlspecialchars($propTitle) : htmlspecialchars($property->getTitle()); ?>">
 			</div>
 			<div class="propForm">
 				<label for="price">Price</label>
-				<input type="number" name="price" value="<?php echo !empty($data['price']) ? htmlspecialchars($data['price']) : htmlspecialchars($data['price']); ?>">
+				<!-- The value field = check the price field if user entered a new price use it else use the price from db -->
+				<input type="number" name="price" value="<?= htmlspecialchars($price ?? $property->getPrice()); ?>">
 			</div>
 			<div class="propForm">
 				<label for="location">Location</label>
-				<input type="text" name="location" value="<?php echo !empty($data['location']) ? htmlspecialchars($data['location']) : htmlspecialchars($data['location']); ?>">
+				<input type="text" name="location" value="<?= htmlspecialchars($location ?? $property->getLocation()); ?>">
 			</div>
 			<div class="propForm">
-				<p>This property is current <b><?php echo htmlspecialchars($data['status']); ?></b> </p>
+				<p>This property is current <b><?php echo htmlspecialchars($property->getStatus()); ?></b> </p>
 				<label for="status">Change Property Status</label>
 					<select name="status">
 						<!-- Print the current status by default -->
-						<option value="<?php echo $data['status']; ?>" selected>Current: <?php echo $data['status']; ?></option>
+						<option value="<?php echo $property->getStatus(); ?>" selected>Current: <?php echo $property->getStatus(); ?></option>
 						<!-- Show Available if the current status is not set as Available  -->
-						<?php if ($data['status'] !== 'Available') :?> 
+						<?php if ($property->getStatus() !== 'Available') :?> 
 						<option value="Available" <?php echo $status === "Available" ? 'selected' : ''; ?>>Available</option>
 						<?php endif; ?>
 					<!-- Display sold if the current status is not set as Sold -->
-					<?php if ($data['status'] !== 'Sold') : ?>
+					<?php if ($property->getStatus() !== 'Sold') : ?>
 						<option value="Sold" <?php echo $status === 'Sold' ? 'selected' : ''; ?>>Sold</option>
 					<?php endif; ?>
 					</select>
@@ -219,7 +226,7 @@ require_once '../includes/header.php';
 			<div class="propForm">
 				<div class="currentImage">
 					<p>Current Image</p>
-					<img src="../assets/images/<?php echo $data['image']; ?>" width="50" height="50">
+					<img src="../assets/images/<?= $property->getImage(); ?>" width="50" height="50">
 				</div>
 			</div>
 			<div class="propForm">

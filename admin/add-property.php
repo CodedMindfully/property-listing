@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 
 
-$propName = '';
+$propTitle = '';
 $price = '';
 $location = '';
 $status = '';
@@ -14,7 +14,7 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// code...
-	$propName = cleanInputs($_POST['propName']);
+	$propTitle = cleanInputs($_POST['propTitle']);
 	// strip everything except digits and + -
 	$cleanPrice = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT);
 	// $price = cleanInput($_POST['price']);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$imageResult = uploadImage('image');
 
 	// These fields should not be empty
-	if (empty($propName) || empty($location) || empty($status)) {
+	if (empty($propTitle) || empty($location) || empty($status)) {
 		// code...
 		$errors [] = 'All fields are required';
 	}
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					VALUES(:name, :price, :location, :status, :image)";
 		$stmt = $pdo->prepare($query);
 		$success = $stmt->execute([
-			':name' => $propName,
+			':name' => $propTitle,
 			':price' => $price,
 			':location' => $location,
 			':status' => $status,
@@ -103,7 +103,7 @@ require_once '../includes/header.php';
 				<label for="name">
 					Property Name
 				</label>
-				<input type="text" name="propName" value="<?php echo $propName; ?>">
+				<input type="text" name="propTitle" value="<?php echo $propTitle; ?>">
 			</div>
 			<div class="propForm">
 				<label for="price">Price</label>
